@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WebApiTest.Models;
+using WebApiTest.Servis;
 using WebApiTest.SignaR;
 
 namespace WebApiTest
@@ -30,8 +31,14 @@ namespace WebApiTest
         public void ConfigureServices(IServiceCollection services)
         {
             string con = "Server=(localdb)\\mssqllocaldb;Database=usersdbstore;Trusted_Connection=True;";
+            
             // устанавливаем контекст данных
             services.AddDbContext<UsersContext>(options => options.UseSqlServer(con));
+
+            // внедрение зависимости UserService для работы с кэшированием 
+            services.AddTransient<UserService>();
+            // добавление кэширования
+            services.AddMemoryCache();
 
             services.AddControllers(); // контролеры
             services.AddMvc();
