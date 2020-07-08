@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WebApiTest.Models;
 
 namespace WebApiTest.Controllers
@@ -14,12 +15,13 @@ namespace WebApiTest.Controllers
     {
 
        private UsersContext db;
+       private readonly ILogger _logger;
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="context">контекст для работы с БД типа UsersContext</param>
-        public UsersController(UsersContext context)
+        public UsersController(UsersContext context, ILogger<UsersController> logger)
         {
             db = context; 
 
@@ -38,7 +40,9 @@ namespace WebApiTest.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
+           // _logger.LogInformation("Test логирования");
             return await db.Users.ToListAsync();
+            
         }
 
         /// <summary>
@@ -66,10 +70,16 @@ namespace WebApiTest.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> Post(User user)
         {
-            if (user == null)
+            if (user.Age == 99)
+                ModelState.AddModelError("Age", "Возраст не должен быть равен 99");
+
+            if (user.Name == "admin")
             {
-                return BadRequest();
+                ModelState.AddModelError("Name", "Недопустимое имя пользователя - admin");
             }
+            // если есть лшибки - возвращаем ошибку 400
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             db.Users.Add(user);
             await db.SaveChangesAsync(); // сохранение в Бд
@@ -85,6 +95,7 @@ namespace WebApiTest.Controllers
         [HttpPut]
         public async Task<ActionResult<User>> Put(User user)
         {
+
             if (user == null)
             {
                 return BadRequest();
@@ -103,14 +114,16 @@ namespace WebApiTest.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> Delete(int id)
         {
-            User user = db.Users.FirstOrDefault(x => x.Id == id);
-            if (user == null)
+            User user = db.Users.FirstOrDefault(x => x.Id == id); //ищем по id в Бд
+
+            if (user == null) // проверяем на nuul
             {
                 return NotFound();
             }
-            db.Users.Remove(user);
-            await db.SaveChangesAsync();
-            return Ok(user);
+
+            db.Users.Remove(user); // Запись на очистку Бд
+            await db.SaveChangesAsync(); //Сохранеия состояния БД
+            return Ok(user); // возврат статуса
         }
     
 

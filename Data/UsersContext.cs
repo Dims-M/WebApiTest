@@ -18,5 +18,8 @@ namespace WebApiTest.Models
         {
             Database.EnsureCreated(); // создание БД если ее не существует
 
+        }
     }
+
 }
+    
