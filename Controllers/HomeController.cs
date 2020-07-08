@@ -25,8 +25,10 @@ namespace WebApiTest.Controllers
         {
             User user = await userService.GetUser(id);
             if (user != null)
-                return Content($"User: {user.Name}");
-            return Content("User not found");
+                //   return Content($"User: {user.Name}");
+                return View(user);
+            // return Content("User not found");
+            return View(user);
         }
     }
 }

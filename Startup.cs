@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +41,14 @@ namespace WebApiTest
             services.AddTransient<UserService>();
             // добавление кэширования
             services.AddMemoryCache();
+
+            // добавляем сервис компрессии. сжатия данных для отпраки клиенту
+            services.AddResponseCompression(options => options.EnableForHttps = true);
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Optimal;
+            });
+
 
             services.AddControllers(); // контролеры
             services.AddMvc();
@@ -75,14 +85,25 @@ namespace WebApiTest
           //  ILogger logger = loggerFactory.CreateLogger<Startup>();
 
 
-            app.UseDefaultFiles(); //Работа с остатическими файлами
-            app.UseStaticFiles();
+            app.UseDefaultFiles();
+            //app.UseStaticFiles();//Работа с остатическими файлами
+           app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=600"); // устанавливаем кэш на 10 минут
+                }
+            });
+
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            //Подключаем метод компрессии. сжатия данных для отправки клиенту
+            app.UseResponseCompression();
 
             // подключаем CORS // подробно https://metanit.com/sharp/aspnet5/31.1.php
             app.UseCors(builder => builder.AllowAnyOrigin()); //С помощью метода AllowAnyOrigin() мы указываем, что приложение может обрабатывать запросы от приложений по любым адрес
