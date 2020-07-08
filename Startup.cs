@@ -77,6 +77,9 @@ namespace WebApiTest
 
             app.UseAuthorization();
 
+            // подключаем CORS // подробно https://metanit.com/sharp/aspnet5/31.1.php
+            app.UseCors(builder => builder.AllowAnyOrigin()); //С помощью метода AllowAnyOrigin() мы указываем, что приложение может обрабатывать запросы от приложений по любым адрес
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers(); // запус через атрибуты контроллера
