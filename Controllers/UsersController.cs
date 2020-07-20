@@ -125,9 +125,23 @@ namespace WebApiTest.Controllers
             await db.SaveChangesAsync(); //Сохранеия состояния БД
             return Ok(user); // возврат статуса
         }
-    
+
+        [HttpPost]
+      //  [Route("foo/bar")]
+        [Consumes("multipart/form-data")]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> FooBar([FromForm] User data)
+        {
+            if (data == null)
+            {
+                return BadRequest ();
+            }
+
+            db.Add(data);
+            await db.SaveChangesAsync();
+            return Ok(data);
+        }
 
 
-
-}
+    }
 }

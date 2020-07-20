@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -94,6 +95,26 @@ namespace WebApiTest.Servis
             }
             return user;
         }
+
+
+
+        //[HttpPost]
+        //[Route("foo/bar")]
+        //[Consumes("multipart/form-data")]
+        //[DisableRequestSizeLimit]
+        //public async Task<IActionResult> FooBar([FromForm] User data)
+        //{
+        //    if (data == null)
+        //    {
+        //        return ContentResult "";
+        //    }
+
+        //    db.Add(data);
+        //    await db.SaveChangesAsync();
+        //    return Ok(data);
+        //}
+
+
     }
 
 }

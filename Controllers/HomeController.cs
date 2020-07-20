@@ -20,6 +20,7 @@ namespace WebApiTest.Controllers
         {
             userService = service;
             userService.Initialize();
+
         }
         public async Task<IActionResult> Index(int id)
         {
@@ -30,5 +31,9 @@ namespace WebApiTest.Controllers
             // return Content("User not found");
             return View(user);
         }
+
+        
+
+
     }
 }
