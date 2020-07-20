@@ -13,12 +13,20 @@ namespace WebApiTest.Models
     public class UsersContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+
+        /// <summary>
+        /// Работа с Таблицей файлов
+        /// </summary>
+        public DbSet<FileModel> FileModels { get; set; }
+
         public UsersContext(DbContextOptions<UsersContext> options)
             : base(options)
         {
             Database.EnsureCreated(); // создание БД если ее не существует
 
         }
+
+
     }
 
 }

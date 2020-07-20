@@ -50,7 +50,8 @@ namespace WebApiTest
             });
 
 
-            services.AddControllers(); // контролеры
+            services.AddControllers(); // используем контроллеры без представлений
+            services.AddControllersWithViews();
             services.AddMvc();
 
             services.AddSignalR();// сервис работы с SignalR
